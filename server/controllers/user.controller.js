@@ -2,19 +2,31 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const db = require("../models");
 const User = db.user;
+const uuidv4 = require('uuid/v4');
 
-const signUp = (req, res) => {
+const signUp = async (req, res) => {
+
   let {email, password} = req.body;
   if (!email || !password) {
     return res.status(400).json({
-      message: "Email or password is empty, both must be filled!"
+      message: `Email or password is empty, both must be filled!`
     });
   };
 
+  const hashedPassword = await new Promise((resolve, reject) => {
+    bcrypt.hash(password, 10, function(err, hash) {
+      if (err) reject(err)
+      resolve(hash)
+    });
+  })
+
   const user_to_be_created = {
+    id: uuidv4(),
     email: email,
-    password: bcrypt.hash(password, 10, (err, hash) => return hash)
+    password: hashedPassword
   };
+
+  // console.log(user_to_be_created)
 
   User.create(user_to_be_created)
     .then(user_created => {
@@ -29,6 +41,8 @@ const signUp = (req, res) => {
 
 const logIn = (req, res) => {
   let {email, password} = req.body;
+  // console.log("INNNNNN");
+  // console.log(req.user);
   if (!email || !password) {
     res.status(400).json({
       message: "Email or password is empty, both must be filled!"
@@ -36,8 +50,8 @@ const logIn = (req, res) => {
     return;
   };
   
+  // console.log(req.session);
   const temp = req.session.passport;
-
   req.session.regenerate((err) => {
     if (err) {
       console.log("error regen session")
@@ -57,20 +71,14 @@ const logIn = (req, res) => {
 };
 
 const logOut = (req, res) => {
-  req.session.destroy(function(err) {
-    if (err) {
-      res.status(500).json(err);
-    } else {
-      res.json({
-        success: true,
-        message: 'You are logged out'
-      });
-    }
-  });
+  req.logOut();
 };
 
 const current = (req, res) => {
-  User.findByPk(id)
+  const {payload} = req
+  User.findOne({
+    where: {email: payload.email}
+  })
     .then((user) => {
       if(!user) {
         return res.status(400).json({
