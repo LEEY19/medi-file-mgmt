@@ -1,21 +1,26 @@
+const jwt = require('jsonwebtoken');
+
 module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define("user", {
     id: {
       type: Sequelize.STRING,
-      primaryKey: true  
+      primaryKey: true,
+      allowNull: false
     },
     email: {
       type: Sequelize.STRING,
       validate: {
         isEmail: true
+      },
+      unique: {
+          args: true,
+          msg: 'Email address already in use!'
       }
     },
     password: {
-      type: Sequelize.STRING
-    },
-    role: {
-      type: Sequelize.STRING
-    },
+      type: Sequelize.STRING,
+      allowNull: false
+    }
   });
 
   User.prototype.generateJWT = function () { 
