@@ -14,7 +14,7 @@ router.post('/login', auth.optional, passport.authenticate('local'), users.logIn
 //GET current route (required, only authenticated users have access)
 router.get('/current', auth.required, users.current)
 
-//delete user, update user info such as email, get all users are skipped in this exercise
+router.post('/logout', auth.required, users.logOut)
 
 
 module.exports = router;

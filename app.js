@@ -14,6 +14,8 @@ const router = require('./server/routes/index');
 
 const PORT = process.env.PORT || 8080;
 
+global.__basedir = __dirname;
+
 //Initiate our app
 const app = express();
 
@@ -41,8 +43,8 @@ require('./server/config/passport')(passport)
 
 app.use('/', router)
 
-models.sequelize.sync()  
-// models.sequelize.sync({force: true})
+// models.sequelize.sync()  
+models.sequelize.sync({force: true})
 .then(function() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);

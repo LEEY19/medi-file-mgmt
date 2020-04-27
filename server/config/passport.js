@@ -17,22 +17,15 @@ passport.deserializeUser(function(user, done) {
     usernameField: 'email',
     passwordField: 'password',
   }, async (email, password, done) => {
-    // console.log("innnn"+email)
-    // console.log(email)
-    // const chicken = await User.findAll({
-    //   where: {email}  
-    // });
-    // console.log(chicken);
-
 
     User.findOne({
       where: {email} 
     })
     .then(async (user) => {
       // user = user.dataValues
-      const userData = user.dataValues;
       // if (err) { return done(err); }
       if (!user) { return done(null, false); }
+      const userData = user.dataValues;
 
       const result = await new Promise((resolve, reject) => {
         bcrypt.compare(password, userData.password, function(err, result) {
@@ -42,7 +35,6 @@ passport.deserializeUser(function(user, done) {
       });
 
       if (!result) { return done(null, false); }
-      // if (!user.verifyPassword(password)) { return done(null, false); }
       user.token = user.generateJWT();
       return done(null, user);
     })

@@ -1,12 +1,12 @@
 const passport = require('passport'); 
 const bcrypt = require('bcrypt');
 const db = require("../models");
-const User = db.user;
+const User = db.users;
 const uuidv4 = require('uuid/v4');
 
 const signUp = async (req, res) => {
-
   let {email, password} = req.body;
+
   if (!email || !password) {
     return res.status(400).json({
       message: `Email or password is empty, both must be filled!`
@@ -26,8 +26,6 @@ const signUp = async (req, res) => {
     password: hashedPassword
   };
 
-  // console.log(user_to_be_created)
-
   User.create(user_to_be_created)
     .then(user_created => {
       res.json({ user: user_created.toAuthJSON() });
@@ -41,8 +39,6 @@ const signUp = async (req, res) => {
 
 const logIn = (req, res) => {
   let {email, password} = req.body;
-  // console.log("INNNNNN");
-  // console.log(req.user);
   if (!email || !password) {
     res.status(400).json({
       message: "Email or password is empty, both must be filled!"
@@ -50,7 +46,6 @@ const logIn = (req, res) => {
     return;
   };
   
-  // console.log(req.session);
   const temp = req.session.passport;
   req.session.regenerate((err) => {
     if (err) {
@@ -71,7 +66,21 @@ const logIn = (req, res) => {
 };
 
 const logOut = (req, res) => {
-  req.logOut();
+  let {email} = req.body;
+  console.log(email)
+  User.findOne({
+    where: {email}
+  })
+  .then((user) => {
+    if(!user) {
+      return res.status(400).json({
+        message: "User is not found"
+      });
+    }
+
+    req.logOut();
+    return res.status(200).json({ msg: "Logged Out!" });
+  });
 };
 
 const current = (req, res) => {
