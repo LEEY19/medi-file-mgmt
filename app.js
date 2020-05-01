@@ -41,6 +41,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./server/config/passport')(passport)
 
+
+app.use((req, res, next) => {
+	if (req.url !== '/api/users/login' && req.url !== '/api/users' && req.method === 'POST') {	
+		if(!req.session.email) {
+			return res.status(401).json({ message: "Please log in first to have a valid session." })
+		}
+	}
+	next();
+})
+
 app.use('/', router)
 
 // models.sequelize.sync()  
