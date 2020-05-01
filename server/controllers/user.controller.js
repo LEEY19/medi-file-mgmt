@@ -39,6 +39,7 @@ const signUp = async (req, res) => {
 
 const logIn = (req, res) => {
   let {email, password} = req.body;
+
   if (!email || !password) {
     res.status(400).json({
       message: "Email or password is empty, both must be filled!"
@@ -61,13 +62,14 @@ const logIn = (req, res) => {
     }
   });
 
+  req.session.email = email;
   return res.json({ user: req.user.toAuthJSON() });
 
 };
 
 const logOut = (req, res) => {
   let {email} = req.body;
-  console.log(email)
+
   User.findOne({
     where: {email}
   })
@@ -78,8 +80,15 @@ const logOut = (req, res) => {
       });
     }
 
-    req.logOut();
-    return res.status(200).json({ msg: "Logged Out!" });
+    req.session.destroy((err) => {
+        if(err) {
+          return res.status(400).json({
+            message: "Session destroying failed!"
+          });
+        }
+    });
+
+    return res.status(200).json({ message: "Logged Out!" });
   });
 };
 
