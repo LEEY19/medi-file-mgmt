@@ -20,8 +20,6 @@ const upload = (req, res) => {
 };
 
 const all = (req, res) => {
-  console.log(req.sessionID)
-  console.log(req.isAuthenticated())
   File.findAll({
     order: [ [ 'createdAt', 'DESC' ]]
   }).then(function(files){
