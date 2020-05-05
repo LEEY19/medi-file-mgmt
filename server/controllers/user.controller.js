@@ -37,8 +37,9 @@ const signUp = async (req, res) => {
     });
 };
 
-const logIn = (req, res) => {
+const logIn = async (req, res) => {
   let {email, password} = req.body;
+  req.session.email = email;
 
   if (!email || !password) {
     res.status(400).json({
@@ -55,21 +56,29 @@ const logIn = (req, res) => {
   });
 
   req.session.passport = temp;
-    
-  req.session.save((err) => {
-    if (err) {
-      console.log("error save session")
-    }
-  });
 
-  req.session.email = email;
-  return res.json({ user: req.user.toAuthJSON() });
+  const sessionSaved = await new Promise((resolve, reject) => {
+    req.session.save((err) => {
+      if (err) reject(false)
+      resolve(true)
+    });
+  })
+
+  if (sessionSaved) {
+    return res.json({ user: req.user.toAuthJSON() });
+  } else {
+    return res.status(400).json({
+      message: "Failed to save session!"
+    });
+  }
+
+
 
 };
 
 const logOut = (req, res) => {
   let {email} = req.body;
-
+  console.log("INNN")
   User.findOne({
     where: {email}
   })
