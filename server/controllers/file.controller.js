@@ -4,6 +4,7 @@ const db = require("../models");
 const File = db.files;
 
 const upload = (req, res) => {
+  const url = 'http://localhost:8080' + '/static/assets/tmp/';
   File.create({
     id: uuidv4(),
     type: req.file.mimetype,
@@ -12,7 +13,7 @@ const upload = (req, res) => {
   }).then(file => {
     try {
       fs.writeFileSync(__basedir + '/resources/static/assets/tmp/' + file.name, file.data);
-      res.json({msg: 'File uploaded successfully!', file: req.file, id: file.id});
+      res.json({msg: 'File uploaded successfully!', file: req.file, id: file.id, filepath: url});
     } catch(err) {
       res.json({err: err});
     }
@@ -20,11 +21,12 @@ const upload = (req, res) => {
 };
 
 const all = (req, res) => {
+  const url = 'http://localhost:8080' + '/static/assets/tmp/';
   File.findAll({
     order: [ [ 'createdAt', 'DESC' ]]
   }).then(function(files){
     files = files.map((val) => {
-      return {id: val.dataValues.id, name: val.dataValues.name}
+      return {id: val.dataValues.id, name: val.dataValues.name, filepath: url + val.dataValues.name}
     });
     res.json({files: files});
   })
@@ -32,24 +34,6 @@ const all = (req, res) => {
     res.json({err: err});
   }) 
 
-}
- 
-const download = (req, res) => {
-  const uploadFolder = __basedir + '/resources/static/assets/tmp/';
-  var id = req.params.id;
-
-  File.findOne({
-    where: {id: id}
-  })
-  .then((file) => {
-    if(!file) {
-      return res.status(400).json({
-        message: "File is not found"
-      });
-    }
-
-    return res.download(uploadFolder + file.name);
-  });
 }
 
 const deletefile = (req, res) => {
@@ -96,6 +80,5 @@ const deletefile = (req, res) => {
 module.exports = {
   upload: upload,
   all: all,
-  download: download,
   deletefile: deletefile,
 }

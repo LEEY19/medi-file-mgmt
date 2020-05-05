@@ -29,7 +29,7 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'resources')));
 var myStore = new SequelizeStore({
     db: models.sequelize
 })
@@ -39,7 +39,6 @@ myStore.sync();
 app.use(session({ 
   secret: 'medi-file-mgmt', 
   cookie: { maxAge: (30 * 86400 * 1000), secure: false }, 
-  // expires: new Date(Date.now() + (30 * 86400 * 1000)),
   resave: false, 
   saveUninitialized: false,
   store: myStore
@@ -55,7 +54,7 @@ app.use((req, res, next) => {
 	console.log(req.session)
 	if (req.url !== '/api/users/login' && req.url !== '/api/users') {
 		if(!req.session.email) {
-			// return res.status(401).json({ message: "Please log in first to have a valid session." })
+			return res.status(401).json({ message: "Please log in first to have a valid session." })
 		}
 	}
 	next();
@@ -63,8 +62,8 @@ app.use((req, res, next) => {
 
 app.use('/', router)
 
-// models.sequelize.sync()  
-models.sequelize.sync({force: true})
+models.sequelize.sync()  
+// models.sequelize.sync({force: true})
 .then(function() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
