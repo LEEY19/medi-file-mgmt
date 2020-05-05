@@ -78,7 +78,6 @@ const logIn = async (req, res) => {
 
 const logOut = (req, res) => {
   let {email} = req.body;
-  console.log("INNN")
   User.findOne({
     where: {email}
   })
