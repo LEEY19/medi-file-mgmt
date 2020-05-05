@@ -13,6 +13,7 @@ const models = require('./server/models');
 const router = require('./server/routes/index');
 
 const PORT = process.env.PORT || 8080;
+global.__rooturl = 'http://localhost:' + PORT;
 
 global.__basedir = __dirname;
 

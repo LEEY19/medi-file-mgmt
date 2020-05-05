@@ -4,7 +4,7 @@ const db = require("../models");
 const File = db.files;
 
 const upload = (req, res) => {
-  const url = 'http://localhost:8080' + '/static/assets/tmp/';
+  const url = __rooturl + '/static/assets/tmp/';
   File.create({
     id: uuidv4(),
     type: req.file.mimetype,
@@ -21,7 +21,7 @@ const upload = (req, res) => {
 };
 
 const all = (req, res) => {
-  const url = 'http://localhost:8080' + '/static/assets/tmp/';
+  const url = __rooturl + '/static/assets/tmp/';
   File.findAll({
     order: [ [ 'createdAt', 'DESC' ]]
   }).then(function(files){
