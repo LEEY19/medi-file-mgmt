@@ -9,7 +9,7 @@ brew services restart postgresql
 ```
 npm install -g sequelize-cli
 ```
-* If postgres as a role is not created yet, do the following:
+* If "postgres" as a role is not created yet, do the following:
   - Enter PostgreSQL command line by typing:
   ```
   psql postgres
