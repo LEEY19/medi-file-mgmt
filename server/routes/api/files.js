@@ -7,8 +7,6 @@ router.post('/upload', auth.required, upload.single("uploadfile"), files.upload)
 
 router.delete('/deletefile/:id', auth.required, files.deletefile)
 
-router.get('/download/:id', auth.required, files.download)
-
 router.get('/all', auth.required, files.all)
 
 module.exports = router;
