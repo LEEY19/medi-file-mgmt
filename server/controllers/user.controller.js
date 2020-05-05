@@ -57,23 +57,14 @@ const logIn = async (req, res) => {
 
   req.session.passport = temp;
 
-  const sessionSaved = await new Promise((resolve, reject) => {
-    req.session.save((err) => {
-      if (err) reject(false)
-      resolve(true)
-    });
-  })
+  req.session.save((err) => {
+    // if (err) reject(false)
+    // resolve(true)
+  });
 
-  if (sessionSaved) {
-    return res.json({ user: req.user.toAuthJSON() });
-  } else {
-    return res.status(400).json({
-      message: "Failed to save session!"
-    });
-  }
+  console.log(req.session)
 
-
-
+  return res.json({ user: req.user.toAuthJSON() });
 };
 
 const logOut = (req, res) => {

@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 	console.log(req.session)
 	if (req.url !== '/api/users/login' && req.url !== '/api/users') {
 		if(!req.session.email) {
-			return res.status(401).json({ message: "Please log in first to have a valid session." })
+			// return res.status(401).json({ message: "Please log in first to have a valid session." })
 		}
 	}
 	next();
@@ -63,8 +63,8 @@ app.use((req, res, next) => {
 
 app.use('/', router)
 
-models.sequelize.sync()  
-// models.sequelize.sync({force: true})
+// models.sequelize.sync()  
+models.sequelize.sync({force: true})
 .then(function() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
