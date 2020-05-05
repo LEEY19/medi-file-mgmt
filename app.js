@@ -25,20 +25,6 @@ var corsOptions = {
   credentials: true,
 }
 
-// app.options("*", (req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-//   // res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-//   res.send()
-//   // next();
-//   // # try: 'POST, GET, PUT, DELETE, OPTIONS'
-//   // res.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-//   // # try: 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
-//   // res.header('Access-Control-Allow-Headers', 'Content-Type')
-// })
-
-// app.options("*", cors(corsOptions));
-
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
